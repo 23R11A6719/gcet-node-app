@@ -1,34 +1,48 @@
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
+
 const app = express();
+
 app.listen(8080, () => {
-  console.log("Server Started");
+    mongoose.connect("mongodb://localhost:27017/gcet");
+  console.log("Server Started on port 8080");
 });
-app.use(cors());
-app.get("/", (req, res) => {
+
+const userSchema = mongoose.Schema({
+    name: {type: String},
+});
+
+const user = mongoose.model("User", userSchema);
+
+app.use(cors())
+app.use(express.json())
+app.get("/", async (req, res) => {
   return res.send("Good Morning");
 });
 
-app.get("/greet", (req, res) => {
-  res.send("Greetings");
-});
+app.post("/register", async(req, res)=>{
+    const {name} = req.body
+    const result = await user.insertOne({name: "John"});
+    return res.json(result);
+})
 
-app.get("/name", (req, res) => {
-  res.send("varshitha");
-});
+app.get("/greet",(req,res)=>{res.send("Greetings")})
 
-app.get("/weather", (req, res) => {
-  res.send("31degree");
-});
+app.get("/name",(req,res)=>{res.send("varshitha")})
 
-app.get("/products", (req, res) => {
-  const products = [
-    { name: "Product 1", price: 34 },
-    { name: "Product 2", price: 64 },
-    { name: "Product 3", price: 45 },
+app.get("/weather",(req,res)=>{res.send("31degree")})
+
+app.get("/product",(req,res)=>{
+  const products =[
+    { name: "Product 1", price: 34},
+    { name: "Product 2", price: 64},
+    { name: "Product 3", price: 44},
   ];
   res.json(products);
-});
+  
+})
+
 
 // import express from "express";
 // import cors from "cors";
